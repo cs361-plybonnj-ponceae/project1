@@ -1,7 +1,3 @@
-CS 361 - Project 1
-Project due date: Tuesday, February 1st, 2022, 11:59 pm EST.
-Deliverables: Source code
-This project is worth 4% of your total grade.
 Write a C program in a single file (only one source file, no .h files, not multiple .c files), that takes as its two command-line arguments the name of an input file (1st parameter) and the name of a map file (second parameter). After validating that the two files exist and are readable, your program must process the entries in the map file and extract all the files and their data from the input file. Make sure you read the project page for details on input files, map files, and assumptions you can make.
 
 Let's suppose you have the following map file:
@@ -51,6 +47,3 @@ ce8b6c2956baef1430e89440aa1c6ffc022f29e977209cb0f6451c4621713771  file0015.jpg
 1d4755fe936832ed88a91d73e829f36c75d7a8c9adda330716f94496afdf6753  file0016.jpg
 c2dd12cbcd77565edff8ee76ba2d5f52e407f7b72e1bd1a7d14f05d8863f8092  file0017.jpg
 790e7bc2e4ee3cb1f2f26545e1ac5fd52f520ba4e8b91ac48809fcf1772453c6  file0018.jpg
-
-Submission
-Name your source code file "project1.c"and submit it via the upload link in Canvas.
