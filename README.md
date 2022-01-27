@@ -2,15 +2,25 @@ Write a C program in a single file (only one source file, no .h files, not multi
 
 Let's suppose you have the following map file:
 Entry 0: "File0001.jpg", 0
+
 Entry 1: "File0001.jpg", 1
+
 Entry 2: "File0002.htm", 0
+
 Entry 3: "File0001.jpg", 2
+
 Entry 4: "File0001.jpg", 3
+
 Entry 5: "File0002.htm", 2
+
 Entry 6: "File0001.jpg", 4
+
 Entry 7: "File0001.jpg", 5
+
 Entry 8: "File0002.htm", 1
+
 For this map file, your program needs to create two files: "File0001.jpg" and "File0002.htm". File0001.jpg needs to consist of Clusters 0, 1, 3, 4, 6, and 7 of the input file (in that order), and File0002.htm needs to consist of Clusters 2, 8, and 5 of the input file (in that order). A zip file, containing data, map and hash sum files for the above example can be downloaded here.
+
 Efficiency of your implementation
 A straightforward, but inefficient, way to solve the problem is as follows:
 open the input file for reading
@@ -20,6 +30,7 @@ in file X, seek to position Y*CLUSTER_SIZE
 in the input file, seek to position i*CLUSTER_SIZE
 read CLUSTER_SIZE bytes from input file and write them to file X
 close file X
+
 This will produce the correct files from the map and input files, but it is very inefficient, because it performs an open and a close operation (both expensive system calls) for each cluster of the input file (potentially millions or even billions). A better solution is to open a file only once, when it is first encountered, and then store the file descriptor in a data structure together with the associated file name. Given a map entry file name, first the data structure is consulted to see if a file descriptor for that file already exists. If it does, it is used for seeking and writing. If not, then a new file descriptor is created by opening and creating the new file, and the descriptor is then stored in the data structure.
 
 For your project, you may opt to submit the inefficient solution, but you will get at most a grade of 75% for this (assuming everything is perfect). Thus, I strongly suggest that you implement the efficient solution.
@@ -28,6 +39,7 @@ For this project, you may assume that the map file is always well-formed (proper
 Additional files
 Here is another map file for testing. It maps the same input file, i.e. the generated files should look identical to those you extract with the other map file on the projects page. However, the name entries for this file are shorter (not using all 12 bytes).
 Checksums for files
+
 Below are the SHA 256 checksums for each file. You can use the 'sha256sum' binary on stu to compute the checksum for files you extract and compare them to the ones listed below. If they match, you have successfully extracted the file.
 338f9b150c973d0489b9a270823ce55d62305efb75c05f6859389647724b9466  file0001.jpg
 baf00870871250aa2fbd563a2c39372a73581946e9b9f1eb97a77419139581c9  file0002.htm
