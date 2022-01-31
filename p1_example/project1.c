@@ -13,6 +13,11 @@
   #include <stdbool.h>
   #include <errno.h>
   #include <string.h>
+  
+struct entry {
+	uint64_t first;
+	uint64_t second;
+};
  
  int main (int argc, char **argv) {
 	
@@ -51,13 +56,21 @@
 	
 	FILE *jpg = fopen("File0001.jpg", "r");
 	FILE *htm = fopen("File0002.htm", "r");
-	char buffer[4096];
+	struct entry entry;
+	
 	for (int i = 0; i < 8; i++) {
-		fread(buffer, sizeof(buffer), 1, map);
-		printf("%s", buffer);
+		printf("Entry %d\n", i);
+		fread(&entry, sizeof(entry), 1, map);
+		printf("File number %lx\n", entry.first);
+		printf("Cluster number %lx\n", entry.second);
+
 
 	}
 	
+
+	
+	
+
 	
 	
 	
