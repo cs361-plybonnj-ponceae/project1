@@ -15,16 +15,25 @@
   #include <string.h>
  
  int main (int argc, char **argv) {
-	char *inputfn;
-	char *mapfn;
 	
-	if (argc != 3) {
-		printf("Invalid number of arguments!\n");
-		return EXIT_FAILURE;
-	} else {
-		inputfn = argv[1];
+	// declare filenames
+    char *inputfn;
+	char *mapfn;
+
+    // program must be passed input data file and output map file
+    if (argc != 3) {
+        printf("Invalid number of arguments!\n\tUsage: <program> <input> <output>");
+        return EXIT_FAILURE;
+    } else {
+        // extract filename
+        inputfn = argv[1];
 		mapfn = argv[2];
-	}
+    }
+	
+    // declare files
+    FILE *input;
+	FILE *map;
+
 	//check if file's are valid
 	if (!fopen(inputfn, "r")) {
         printf("Opening file \"%s\" failed: %s\n", inputfn, strerror(errno));
@@ -38,10 +47,19 @@
 	} else {
 		FILE *map = fopen(mapfn, "r");
 	}
+        input = fopen(inputfn, "a+");
+		map = fopen(mapfn, "a+");
+    }
 	
+	// BRUTE FORCE 
 	
-
-	 
+	// iterate over each map entry; assume you are at Entry i, which has
+	// file name X and offset Y:
+	
+	// testing filename and reading
+	printf("%s file read successfully\n", inputfn);
+	printf("%s file read successfully\n", mapfn);
+	
  }
 
   
