@@ -11,6 +11,8 @@
   #include <stdint.h>
   #include <stdlib.h>
   #include <stdbool.h>
+  #include <errno.h>
+  #include <string.h>
  
  int main (int argc, char **argv) {
 	char *inputfn;
@@ -23,17 +25,18 @@
 		inputfn = argv[1];
 		mapfn = argv[2];
 	}
-	
-	//check if file is valid
-    FILE *input = fopen(inputfn, "r");
-	FILE *map = fopen(mapfn, "r");
-
-    if (input == NULL) {
-        printf("Failed to read input file!\n");
-		return EXIT_FAILURE;
-    } else if (map == NULL) {
-		printf("Failed to read map file!\n");
-		return EXIT_FAILURE;
+	//check if file's are valid
+	if (!fopen(inputfn, "r")) {
+        printf("Opening file \"%s\" failed: %s\n", inputfn, strerror(errno));
+        return EXIT_FAILURE;
+	} else {
+		FILE *input = fopen(inputfn, "r");
+	}	
+	if (!fopen(mapfn, "r")) {
+        printf("Opening file \"%s\" failed: %s\n", mapfn, strerror(errno));
+        return EXIT_FAILURE;
+	} else {
+		FILE *map = fopen(mapfn, "r");
 	}
 	
 	
