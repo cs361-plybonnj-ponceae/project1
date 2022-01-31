@@ -30,6 +30,7 @@ int main (int argc, char **argv) {
 	// these variables are for reading input/map filenames
     char *inputfn;
 	char *mapfn;
+	
 
     // program must be passed input data file and output map file
     if (argc != 3) {
@@ -58,39 +59,23 @@ int main (int argc, char **argv) {
 	} else {
 		map = fopen(mapfn, "r");
 	}
-
-	// OLD SOLUTION 
-	/*
-	FILE *jpg = fopen("File0001.jpg", "r");
-	FILE *htm = fopen("File0002.htm", "r");
-	struct entry entry;
 	
-	for (int i = 0; i <= 8; i++) {
-		printf("Entry:    %d\n", i);
-		fread(&entry, sizeof(entry), 1, map);
-		printf("Filename: %s\n", entry.fn);
-		printf("Cluster:  %x\n", entry.cluster);
-		printf("-----------------\n");
-	}
-	*/
-	
-	// BRUTE FORCE (I think)
-	
-	FILE *jpg;
 	FILE *htm;
 	struct entry entry;
-	
-	// iterate over each map entry; assume you are at Entry i, 
-	// which has file name X and offset Y
-	for (int i = 0; i <= 8; i++) {
-		fread(&entry, sizeof(entry), 1, map);
-		// open file X, creating it if it does not already exist
-		jpg = fopen(entry.fn, "r");
-		// in file X, seek to position y * CLUSTER_SIZE
-		fseek(jpg, i * 16, SEEK_SET);
-		// in the input file, seek to position i * CLUSTER_SIZE
-		fseek(input, i * CLUSTER_SIZE, SEEK_SET);
-		// read CLUSTER_SIZE bytes from input file and write them to file X
-		// close file x
+	fread(&entry, sizeof(entry), 1, map);
+	char string[12];
+	strncpy(string, entry.fn, 12);
+	string[12] = '\0';
+	printf("%s", string);
+	FILE *jpg = fopen(string, "ab+");
+	if(strstr(string, ".jpg")) {
+		printf("JPG found");
+	} else {
+		printf("HTM found");
 	}
+	
+	
+
+	
+
  }
