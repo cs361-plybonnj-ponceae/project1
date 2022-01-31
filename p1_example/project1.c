@@ -39,26 +39,27 @@
         printf("Opening file \"%s\" failed: %s\n", inputfn, strerror(errno));
         return EXIT_FAILURE;
 	} else {
-		FILE *input = fopen(inputfn, "r");
+		input = fopen(inputfn, "r");
 	}	
 	if (!fopen(mapfn, "r")) {
         printf("Opening file \"%s\" failed: %s\n", mapfn, strerror(errno));
         return EXIT_FAILURE;
 	} else {
-		FILE *map = fopen(mapfn, "r");
+		map = fopen(mapfn, "r");
 	}
-        input = fopen(inputfn, "a+");
-		map = fopen(mapfn, "a+");
-    }
+
 	
-	// BRUTE FORCE 
+	FILE *jpg = fopen("File0001.jpg", "r");
+	FILE *htm = fopen("File0002.htm", "r");
+	char buffer[4096];
+	for (int i = 0; i < 8; i++) {
+		fread(buffer, sizeof(buffer), 1, map);
+		printf("%s", buffer);
+
+	}
 	
-	// iterate over each map entry; assume you are at Entry i, which has
-	// file name X and offset Y:
 	
-	// testing filename and reading
-	printf("%s file read successfully\n", inputfn);
-	printf("%s file read successfully\n", mapfn);
+	
 	
  }
 
