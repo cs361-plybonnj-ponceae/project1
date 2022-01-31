@@ -11,34 +11,52 @@
   #include <stdint.h>
   #include <stdlib.h>
   #include <stdbool.h>
+  #include <errno.h>
+  #include <string.h>
  
  int main (int argc, char **argv) {
-	char *inputfn;
+	
+	// declare filenames
+    char *inputfn;
 	char *mapfn;
-	
-	if (argc != 3) {
-		printf("Invalid number of arguments!\n");
-		return EXIT_FAILURE;
-	} else {
-		inputfn = argv[1];
+
+    // program must be passed input data file and output map file
+    if (argc != 3) {
+        printf("Invalid number of arguments!\n\tUsage: <program> <input> <output>");
+        return EXIT_FAILURE;
+    } else {
+        // extract filename
+        inputfn = argv[1];
 		mapfn = argv[2];
-	}
+    }
 	
-	//check if file is valid
-    FILE *input = fopen(inputfn, "r");
-	FILE *map = fopen(mapfn, "r");
-
-    if (input == NULL) {
-        printf("Failed to read input file!\n");
-		return EXIT_FAILURE;
-    } else if (map == NULL) {
-		printf("Failed to read map file!\n");
-		return EXIT_FAILURE;
-	}
+    // declare files
+    FILE *input;
+	FILE *map;
 	
+	// check if opening of file is successful
+    if (!fopen(inputfn, "r")) {
+        printf("Opening file \"%s\" failed: %s\n", inputfn, strerror(errno));
+        return EXIT_FAILURE;
+    } 
+	if (!fopen(mapfn, "r")) {
+		printf("Opening file \"%s\" failed: %s\n", mapfn, strerror(errno));
+        return EXIT_FAILURE;
+		// open files if valid
+	} else {
+        input = fopen(inputfn, "a+");
+		map = fopen(mapfn, "a+");
+    }
 	
-
-	 
+	// BRUTE FORCE 
+	
+	// iterate over each map entry; assume you are at Entry i, which has
+	// file name X and offset Y:
+	
+	// testing filename and reading
+	printf("%s file read successfully\n", inputfn);
+	printf("%s file read successfully\n", mapfn);
+	
  }
 
   
