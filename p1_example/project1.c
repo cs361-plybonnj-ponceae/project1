@@ -59,19 +59,22 @@ int main (int argc, char **argv) {
 	} else {
 		map = fopen(mapfn, "r");
 	}
-	
-	FILE *htm;
 	struct entry entry;
-	fread(&entry, sizeof(entry), 1, map);
-	char string[12];
-	strncpy(string, entry.fn, 12);
-	string[12] = '\0';
-	printf("%s", string);
-	FILE *jpg = fopen(string, "ab+");
-	if(strstr(string, ".jpg")) {
-		printf("JPG found");
-	} else {
-		printf("HTM found");
+	while (fread(&entry, sizeof(entry), 1, map) == 1) {
+		char string[12];
+		strncpy(string, entry.fn, 12);
+		string[12] = '\0';
+		printf("%s ", string);
+		printf("%d\n", entry.cluster);
+		if(strstr(string, ".jpg")) {
+			//FILE *jpg = fopen(string, "ab+");
+			//printf("JPG found\n");
+		} else {
+			//FILE *htm = fopen(string, "ab+");
+
+			//printf("HTM found\n");
+		}
+	
 	}
 	
 	
