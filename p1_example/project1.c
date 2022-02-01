@@ -18,7 +18,7 @@
 // struct used for reading in a line of file data from map file
 struct entry {
 	char fn[12];
-	uint32_t cluster;
+	int cluster;
 };
  
 /*
@@ -61,17 +61,26 @@ int main (int argc, char **argv) {
 	}
 
 	struct entry entry;
-	int count = 0;
 	char buffer[CLUSTER_SIZE];
+	int count = 0;
+	int jfd = -1;
+	int hfd = -1;
+	FILE *jpg = NULL;
+	FILE *htm = NULL;
+	
 	while (fread(&entry, sizeof(entry), 1, map) == 1) {
 		char filename[12];
 		strncpy(filename, entry.fn, 12);
 		filename[12] = '\0';
+		
 		if (strstr(filename, ".jpg")) {
 			// open file X, creating it if it does not already exist
-			FILE *jpg = fopen(filename, "a+");
+			if (jfd == -1) {
+				jpg = fopen(filename, "a+");
+				jfd = fileno(jpg);
+			}
 			// in file X, seek to position Y*CLUSTER_SIZE
-			fseek(jpg, entry.cluster * CLUSTER_SIZE, SEEK_SET);
+			fseek(jpg, count * CLUSTER_SIZE, SEEK_SET);
 			// in the input file, seek to position i*CLUSTER_SIZE
 			fseek(input, count * CLUSTER_SIZE, SEEK_SET);
 			//read CLUSTER_SIZE bytes from input file
@@ -79,20 +88,28 @@ int main (int argc, char **argv) {
 			// write them to file X
 			fwrite(&buffer, sizeof(buffer), 1, jpg);
 			count++;
-			fclose(jpg);
-		} else if (strstr(filename, ".htm")) {
+		} 
+		
+		if (strstr(filename, ".htm")) {
+			if (hfd == -1) {
+				htm = fopen(filename, "a+");
+				hfd = fileno(htm);
+			}
 			// open file X, creating it if it does not already exist
 			FILE *htm = fopen(filename, "a+");
 			// in file X, seek to position Y*CLUSTER_SIZE
-			fseek(htm, entry.cluster * CLUSTER_SIZE, SEEK_SET);
+			fseek(htm, count * CLUSTER_SIZE, SEEK_SET);
 			// in the input file, seek to position i*CLUSTER_SIZE
 			fseek(input, count * CLUSTER_SIZE, SEEK_SET);
 			//read CLUSTER_SIZE bytes from input file
 			fread(&buffer, sizeof(buffer), 1, input);
 			// write them to file X			
 			fwrite(&buffer, sizeof(buffer), 1, htm);
-			count++;
-			fclose(htm);
+			count++;	
 		}
 	}
+	fclose(jpg);
+	fclose(htm);
+	fclose(input);
+	fclose(map);
  }
