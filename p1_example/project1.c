@@ -59,14 +59,15 @@ int main (int argc, char **argv) {
 	} else {
 		map = fopen(mapfn, "r");
 	}
+
 	struct entry entry;
+	int count = 0;
+	char buffer[CLUSTER_SIZE];
 	while (fread(&entry, sizeof(entry), 1, map) == 1) {
-		char buffer[CLUSTER_SIZE];
 		char filename[12];
 		strncpy(filename, entry.fn, 12);
 		filename[12] = '\0';
-		int count = 0;
-		if(strstr(filename, ".jpg")) {
+		if (strstr(filename, ".jpg")) {
 			// open file X, creating it if it does not already exist
 			FILE *jpg = fopen(filename, "a+");
 			// in file X, seek to position Y*CLUSTER_SIZE
@@ -79,7 +80,7 @@ int main (int argc, char **argv) {
 			fwrite(&buffer, sizeof(buffer), 1, jpg);
 			count++;
 			fclose(jpg);
-		} else {
+		} else if (strstr(filename, ".htm")) {
 			// open file X, creating it if it does not already exist
 			FILE *htm = fopen(filename, "a+");
 			// in file X, seek to position Y*CLUSTER_SIZE
@@ -92,9 +93,6 @@ int main (int argc, char **argv) {
 			fwrite(&buffer, sizeof(buffer), 1, htm);
 			count++;
 			fclose(htm);
-
-
-
 		}
 	}
  }
