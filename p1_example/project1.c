@@ -65,23 +65,35 @@ int main (int argc, char **argv) {
 		char filename[12];
 		strncpy(filename, entry.fn, 12);
 		filename[12] = '\0';
+		int count = 0;
 		if(strstr(filename, ".jpg")) {
 			// open file X, creating it if it does not already exist
-			FILE *jpg = fopen(filename, "wb+");
+			FILE *jpg = fopen(filename, "a+");
 			// in file X, seek to position Y*CLUSTER_SIZE
 			fseek(jpg, entry.cluster * CLUSTER_SIZE, SEEK_SET);
 			// in the input file, seek to position i*CLUSTER_SIZE
-			fseek(input, entry.cluster * CLUSTER_SIZE, SEEK_SET);
+			fseek(input, count * CLUSTER_SIZE, SEEK_SET);
 			//read CLUSTER_SIZE bytes from input file
 			fread(&buffer, sizeof(buffer), 1, input);
 			// write them to file X
 			fwrite(&buffer, sizeof(buffer), 1, jpg);
+			count++;
+			fclose(jpg);
 		} else {
-			FILE *htm = fopen(filename, "wb+");
-			fseek(input, entry.cluster * CLUSTER_SIZE, SEEK_SET);
+			// open file X, creating it if it does not already exist
+			FILE *htm = fopen(filename, "a+");
+			// in file X, seek to position Y*CLUSTER_SIZE
 			fseek(htm, entry.cluster * CLUSTER_SIZE, SEEK_SET);
+			// in the input file, seek to position i*CLUSTER_SIZE
+			fseek(input, count * CLUSTER_SIZE, SEEK_SET);
+			//read CLUSTER_SIZE bytes from input file
 			fread(&buffer, sizeof(buffer), 1, input);
+			// write them to file X			
 			fwrite(&buffer, sizeof(buffer), 1, htm);
+			count++;
+			fclose(htm);
+
+
 
 		}
 	}
