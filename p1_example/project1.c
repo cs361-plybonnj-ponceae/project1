@@ -61,24 +61,28 @@ int main (int argc, char **argv) {
 	}
 	struct entry entry;
 	while (fread(&entry, sizeof(entry), 1, map) == 1) {
-		char string[12];
-		strncpy(string, entry.fn, 12);
-		string[12] = '\0';
-		printf("%s ", string);
-		printf("%d\n", entry.cluster);
-		if(strstr(string, ".jpg")) {
-			//FILE *jpg = fopen(string, "ab+");
-			//printf("JPG found\n");
+		char buffer[CLUSTER_SIZE];
+		char filename[12];
+		strncpy(filename, entry.fn, 12);
+		filename[12] = '\0';
+		if(strstr(filename, ".jpg")) {
+			// open file X, creating it if it does not already exist
+			FILE *jpg = fopen(filename, "wb+");
+			// in file X, seek to position Y*CLUSTER_SIZE
+			fseek(jpg, entry.cluster * CLUSTER_SIZE, SEEK_SET);
+			// in the input file, seek to position i*CLUSTER_SIZE
+			fseek(input, entry.cluster * CLUSTER_SIZE, SEEK_SET);
+			//read CLUSTER_SIZE bytes from input file
+			fread(&buffer, sizeof(buffer), 1, input);
+			// write them to file X
+			fwrite(&buffer, sizeof(buffer), 1, jpg);
 		} else {
-			//FILE *htm = fopen(string, "ab+");
+			FILE *htm = fopen(filename, "wb+");
+			fseek(input, entry.cluster * CLUSTER_SIZE, SEEK_SET);
+			fseek(htm, entry.cluster * CLUSTER_SIZE, SEEK_SET);
+			fread(&buffer, sizeof(buffer), 1, input);
+			fwrite(&buffer, sizeof(buffer), 1, htm);
 
-			//printf("HTM found\n");
 		}
-	
 	}
-	
-	
-
-	
-
  }
