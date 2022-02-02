@@ -10,78 +10,80 @@
 #include <string.h>
 #include <string.h>
 #include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
+
 #define CLUSTER_SIZE 4096
 
 /*
 * Driver that takes an input file and a map file and extracts its
-* contents to aid in data recovery. (DESCRIBE BETTER)
+* contents for data recovery purposes.
 */
 int main (int argc, char **argv)
 {
-
-    // these variables are for reading input/map filenames
-    char *inputfn;
-    char *mapfn;
-
-    // program must be passed input data file and output map file
-    if (argc != 3) {
-        printf("Invalid number of arguments!\n\tUsage: <program> <input> <output>");
-        return EXIT_FAILURE;
+	char *inputfn;
+	char *mapfn;
+	
+	// extracts and validates the filename from the command line
+	if (argc != 3) {
+       printf("Invalid number of arguments: \n"
+			"Usage: ./project1 <data> <map>");
+       return EXIT_FAILURE;
     } else {
-        // extract filename
         inputfn = argv[1];
-        mapfn = argv[2];
+		mapfn = argv[2];
     }
-
-    // open input/map files based on filenames gathered from command line
-    int input = open(inputfn, O_RDONLY);
-    int map = open(mapfn, O_RDONLY);
-    // check if filenames are valid for opening		
-    if (input == -1) {
-        printf("Opening of file failed: %s\n", strerror(errno));
+	
+	FILE *input;
+	FILE *map;
+	
+	// validate and open filenames for reading
+	if (!fopen(inputfn, "r")) {
+        printf("Opening file \"%s\" failed: %s\n", inputfn, strerror(errno));
         return EXIT_FAILURE;
-    } else if (map == -1) {
-		printf("Opening of file failed: %s\n", strerror(errno));
-		return EXIT_FAILURE;
-    }
-    ssize_t bytes_read;
-    int i = 0;
-    while(true) {
-        char filename[13];
-        u_int32_t cluster;
-        bytes_read = read(map, &filename, 12);
-        if (bytes_read == -1) {
-            printf("Error reading from file: %s\n", strerror(errno));
-            return EXIT_FAILURE;
-        }
-        filename[12] = '\0';
-        bytes_read = read(map, &cluster, 4);
-        if (bytes_read == -1) {
-            printf("Error reading from file: %s\n", strerror(errno));
-            exit(1);
-        }
-        char *buf [CLUSTER_SIZE];
-
-        lseek(input, i * CLUSTER_SIZE, SEEK_SET);
-        read(input, buf, CLUSTER_SIZE);
-
-        int fd = open(filename, O_RDWR|O_CREAT, 0666);
-
-        lseek(fd, cluster * CLUSTER_SIZE, SEEK_SET);
-        write(fd, buf, CLUSTER_SIZE);
-
-        close(fd);
-
-        i++;
-		//exit loop if there are no bytes read
-        if (bytes_read == 0) {
-            break;
-        }
-    }
-    close(map);
-    close(input);
+	} else {
+		input = fopen(inputfn, "r");
+	}	
+	
+	if (!fopen(mapfn, "r")) {
+        printf("Opening file \"%s\" failed: %s\n", mapfn, strerror(errno));
+        return EXIT_FAILURE;
+	} else {
+		map = fopen(mapfn, "r");
+	}
+	
+	// buffer for use in reading in input file
+	char buffer[CLUSTER_SIZE];
+	char entry[16];
+	
+	int count = 0;
+	
+	// read each line until EOF
+	while (fread(&entry, sizeof(entry), 1, map) == 1) {
+		
+		// appends a null terminator to the end of the filename
+		char entryfn[12];
+		strncpy(entryfn, entry, 12);
+		entryfn[12] = '\0';
+		
+		// 12th byte starts cluster value
+		int cluster = entry[12];
+		
+		// output file
+		FILE *fn = fopen(entryfn, "a+");
+		
+		// in file X, seek to position Y*CLUSTER_SIZE
+		fseek(fn, cluster * CLUSTER_SIZE, SEEK_SET);
+		// in the input file, seek to position i*CLUSTER_SIZE
+		fseek(input, count * CLUSTER_SIZE, SEEK_SET);
+		
+		//read CLUSTER_SIZE bytes from input file
+		fread(&buffer, sizeof(buffer), 1, input);
+		// write them to file X
+		fwrite(&buffer, sizeof(buffer), 1, fn);
+		
+		fclose(fn);
+		count++;
+		
+	}
+	fclose(input);
+	fclose(map);
 }
